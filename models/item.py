@@ -21,16 +21,10 @@ class ItemModel(db.Model):
         # Gets the first result
         return cls.query.filter_by(name=name).first()
 
-    def insert(self):
-        with sqlite3.connect("data.db") as connection:
-            cursor = connection. cursor()
-            query = "INSERT INTO items VALUES (?,?)"
-            cursor.execute(query, (self.name, self.price))
-            connection.commit()
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
 
-    def update(self):
-        with sqlite3.connect("data.db") as connection:
-            cursor = connection. cursor()
-            query = "UPDATE items SET price=? WHERE name=?"
-            cursor.execute(query, (self.price, self.name))
-            connection.commit()
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()

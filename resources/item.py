@@ -32,37 +32,25 @@ class Item(Resource):
         request_data = Item.parser.parse_args()
         item = ItemModel(name, request_data["price"])
         try:
-            item.insert()
+            item.save_to_db()
         except:
             return {"message": "An error occured inserting the item"}, 500
         return item.json(), 201
 
     def delete(self, name):
-        with sqlite3.connect("data.db") as connection:
-            cursor = connection. cursor()
-            query = "DELETE FROM items WHERE name=?"
-            cursor.execute(query, (name,))
-            connection.commit()
-        # Tell python that items variable is the global variable that we should use
-        # global items
-        # items = list(filter(lambda x: x["name"] != name, items))
+        item = ItemModel.find_by_name(name)
+        if item is not None:
+            item.delete_from_db()
         return {"message": "Item deleted"}
 
     def put(self, name):
         request_data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
-        updated_item = ItemModel(name, request_data["price"])
-        # item = next(filter(lambda x: x["name"] == name, items), None)
-        try:
-            if item is None:
-                # item = {"name": name, "price": request_data["price"]}
-                # items.append(item)
-                updated_item.insert()
-            else:
-                updated_item.update()
-        except:
-            return {"message": "an error occurred during db operation"}, 500
-        return updated_item.json()
+        if item is None:
+            item = ItemModel(name, request_data["price"])
+        else:
+            item.price = request_data["price"]
+        return item.json()
 
 
 class ItemList(Resource):
