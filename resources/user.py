@@ -15,10 +15,6 @@ class UserRegister(Resource):
         if UserModel.find_by_username(data["username"]) is not None:
             # The user is already existing
             return {"message": "User already exists"}, 400
-        with sqlite3.connect("data.db") as connection:
-            cursor = connection.cursor()
-            query = "INSERT INTO users VALUES (NULL,?,?)"
-            cursor.execute(query, (data["username"], data["password"]))
-            connection.commit()
-            # connection.close()
-            return {"message": "User created sucessfully"}, 201
+        user = UserModel(**data)
+        user.save_to_db()
+        return {"message": "User created sucessfully"}, 201
