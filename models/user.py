@@ -1,8 +1,17 @@
 import sqlite3
+from db import db
 
 
-class UserModel():
+class UserModel(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80))
+    password = db.Column(db.String(80))
+
     def __init__(self, _id, username, password):
+        # This self.variables should match with the columns abouve created, else
+        # the values won't be saved to the database
         self.id = _id
         self.username = username
         self.password = password
