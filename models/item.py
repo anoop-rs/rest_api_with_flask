@@ -18,13 +18,8 @@ class ItemModel(db.Model):
 
     @classmethod
     def find_by_name(cls, name):
-        with sqlite3.connect("data.db") as connection:
-            cursor = connection.cursor()
-            query = "SELECT * FROM items WHERE name=?"
-            result = cursor.execute(query, (name,))
-            row = result.fetchone()
-            if row is not None:
-                return cls(*row)
+        # Gets the first result
+        return cls.query.filter_by(name=name).first()
 
     def insert(self):
         with sqlite3.connect("data.db") as connection:
