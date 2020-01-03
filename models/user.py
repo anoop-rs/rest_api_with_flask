@@ -12,7 +12,6 @@ class UserModel(db.Model):
     def __init__(self, username, password):
         # This self.variables should match with the columns abouve created, else
         # the values won't be saved to the database
-        self.id = _id
         self.username = username
         self.password = password
 
