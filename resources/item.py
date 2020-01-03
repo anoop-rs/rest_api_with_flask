@@ -9,6 +9,8 @@ class Item(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument("price", type=float, required=True,
                         help="This field cannot be left blank")
+    parser.add_argument("store_id", type=int, required=True,
+                        help="Every item must belong to a store")
 
     @jwt_required()
     def get(self, name):
@@ -30,7 +32,7 @@ class Item(Resource):
 
         # force=true, when passed to get_json does not process the header. It forces the request to be json
         request_data = Item.parser.parse_args()
-        item = ItemModel(name, request_data["price"])
+        item = ItemModel(name, request_data["price"], request_data["store_id"])
         try:
             item.save_to_db()
         except:
@@ -47,9 +49,11 @@ class Item(Resource):
         request_data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
         if item is None:
-            item = ItemModel(name, request_data["price"])
+            item = ItemModel(
+                name, request_data["price"], request_data["store_id"])
         else:
             item.price = request_data["price"]
+            item.store_id = request_data["store_id"]
         return item.json()
 
 
