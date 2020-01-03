@@ -54,6 +54,10 @@ class Item(Resource):
         else:
             item.price = request_data["price"]
             item.store_id = request_data["store_id"]
+        try:
+            item.save_to_db()
+        except:
+            return {"message": "an error occurred during db operation"}, 500
         return item.json()
 
 
